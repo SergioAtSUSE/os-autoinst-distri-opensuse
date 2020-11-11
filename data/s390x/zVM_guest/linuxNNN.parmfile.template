@@ -1,0 +1,5 @@
+WriteChannel=0.0.0801 ReadChannel=0.0.0800 DataChannel=0.0.0802
+InstNetDev=osa OSAInterface=qdio OSAMedium=eth OSAHWAddr= PortNo=0
+Gateway=192.168.112.254 Nameserver=192.168.112.100 Domain=opensuse.org
+Layer2=0
+HostIP=10.161.157.<INSTANCE_NUMBER>/20 Hostname=s390linux<INSTANCE_NUMBER>

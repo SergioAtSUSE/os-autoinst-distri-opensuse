@@ -49,11 +49,8 @@ sub try_merge_lines {
     return 0;
 }
 
-sub split_lines {
+sub generate_infofile {
     my ($params) = @_;
-
-    # s3270 has a funny behaviour in xedit, so be careful
-    my $columns = 72;
 
     my @lines = split(/ /, $params);
     while (try_merge_lines(\@lines, $columns)) {
@@ -77,11 +74,9 @@ sub create_infofile {
     return shorten_url(autoinst_url . "/files/$path");
 }
 
-sub prepare_parmfile {
+sub prepare_infofile {
     my ($repo) = @_;
-    my $params = '';
-    $params .= " " . get_var('S390_NETWORK_PARAMS');
-    $params .= " " . get_var('EXTRABOOTPARAMS');
+    my $params = get_var('EXTRABOOTPARAMS');
     if ((is_sle('>=15-SP2') || is_tumbleweed()) && get_var('WORKAROUND_BUGS') =~ 'bsc1156047') {
         $params .= ' hardened_usercopy=off hvc_iucv=8';
         record_soft_failure('bsc#1156053 - hardened_usercopy=off to avoid "/dev/hvc0: cannot get controlling tty: Operation not permitted" (Kernel memory overwrite attempt detected to SLUB object - illegal operation)');
@@ -119,7 +114,7 @@ sub prepare_parmfile {
             set_var('AUTOYAST', shorten_url(data_url(get_var('AUTOYAST'))));
         }
     }
-    return split_lines($params);
+    return generate_infofile($params);
 }
 
 sub get_to_yast {
@@ -132,7 +127,7 @@ sub get_to_yast {
     my $dir_with_suse_ins = get_var('REPO_UPGRADE_BASE_0') ? get_required_var('REPO_UPGRADE_BASE_0') : get_required_var('REPO_0');
     my $repo_host         = get_var('REPO_HOST', 'openqa.suse.de');
 
-    my $parmfile_with_Newline_s = prepare_parmfile($dir_with_suse_ins);
+    my $parmfile_with_Newline_s = prepare_infofile($dir_with_suse_ins);
     my $sequence                = <<"EO_frickin_boot_parms";
 ${parmfile_with_Newline_s}
 ENTER
